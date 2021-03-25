@@ -1,0 +1,4 @@
+rootProject.name = 'spring-cucumber'
+
+include 'demo-service'
+include 'acceptance-test'

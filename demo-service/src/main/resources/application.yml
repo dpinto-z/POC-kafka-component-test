@@ -1,0 +1,33 @@
+server:
+  port: ${PORT:8080}
+
+# topic config
+io:
+  confluent:
+    developer:
+      config:
+        topic:
+          name: test
+          replicas: 1
+          partitions: 6
+# common configs
+spring:
+  kafka:
+    bootstrap-servers:
+      - localhost:9092
+#    properties:
+#      schema:
+#        registry:
+#          url: http://localhost:8081
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      compression-type: zstd #gzip, #zstd, snappy
+    consumer:
+      group-id: order-consumers
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      compression-type: zstd
+    template:
+      default-topic: test

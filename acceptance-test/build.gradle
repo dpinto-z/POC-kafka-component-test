@@ -1,0 +1,39 @@
+evaluationDependsOn(':demo-service')
+
+dependencies {
+    testImplementation project(path: ':demo-service', configuration: 'default')
+    testImplementation 'io.cucumber:cucumber-java:6.2.2'
+    testImplementation 'io.cucumber:cucumber-junit:6.2.2'
+    testImplementation 'io.cucumber:cucumber-spring:6.2.2'
+    testImplementation 'org.springframework.kafka:spring-kafka'
+
+    testCompile("com.jayway.restassured:rest-assured:2.4.1") {
+        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
+    }
+}
+
+apply plugin: 'docker-compose'
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+task featureComponents(type: JavaExec, dependsOn: [assemble, testClasses]) {
+    main = "io.cucumber.core.cli.Main"
+
+    classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+
+    args = ['--plugin', 'pretty',
+            '--plugin', 'html:build/reports/cucumber/component',
+            '--glue', 'com.exmple.demo.acceptance.component.stepdefs', 'src/test/cucumber',
+            '--glue', 'com.exmple.demo.acceptance.common.stepdefs',
+            '--tags', 'not @test'
+    ]
+}
+
+dockerCompose {
+    useComposeFiles = ['docker-compose.yml']
+    isRequiredBy(project.tasks.featureComponents)
+}
