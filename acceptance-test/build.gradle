@@ -6,13 +6,15 @@ dependencies {
     testImplementation 'io.cucumber:cucumber-junit:6.2.2'
     testImplementation 'io.cucumber:cucumber-spring:6.2.2'
     testImplementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation "org.testcontainers:testcontainers:1.15.2"
+    testImplementation "org.testcontainers:kafka:1.15.2"
 
     testCompile("com.jayway.restassured:rest-assured:2.4.1") {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
     }
 }
 
-apply plugin: 'docker-compose'
 
 configurations {
     cucumberRuntime {
@@ -33,7 +35,4 @@ task featureComponents(type: JavaExec, dependsOn: [assemble, testClasses]) {
     ]
 }
 
-dockerCompose {
-    useComposeFiles = ['docker-compose.yml']
-    isRequiredBy(project.tasks.featureComponents)
-}
+
